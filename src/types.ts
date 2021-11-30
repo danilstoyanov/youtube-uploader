@@ -47,5 +47,6 @@ export interface Comment {
 export interface Credentials {
     email: string
     pass: string
+    account?: string | undefined
     recoveryemail?: string | undefined
 }

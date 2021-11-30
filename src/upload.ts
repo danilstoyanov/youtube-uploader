@@ -618,10 +618,41 @@ async function loadAccount(credentials: Credentials) {
         }
     }
     try {
+        if(credentials.account) {
+            await changeAccount(page, credentials);
+        }
+    } catch (error) {
+        console.error(error)
+    }
+    try {
         await changeHomePageLangIfNeeded(page)
     } catch (error) {
         console.error(error)
-        await login(page, credentials)
+    }
+}
+
+async function changeAccount(localPage: Page, credentials: Credentials) {
+    await localPage.goto(homePageURL)
+
+    try {
+        const menuSelector = '#avatar-btn';
+        const menuLink = "//*[normalize-space(text())='Сменить аккаунт']";
+        const accountLink = `//*[normalize-space(text())='${credentials.account}']`;
+
+        await localPage.click(menuSelector);
+        await localPage.waitForTimeout(2000);
+
+        await localPage.waitForXPath(menuLink);
+        let button = await localPage.$x(menuLink);
+        await button[0].click();
+
+        await localPage.waitForTimeout(2000);
+        let accountButton = await localPage.$x(accountLink);
+        await accountButton[0].click();
+
+        await localPage.waitForNavigation();
+    } catch (error) {
+        console.error(error);
     }
 }
 
